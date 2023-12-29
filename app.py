@@ -26,7 +26,7 @@ def get_modules():
     for i in files['files']:
         if i["mimeType"] == "application/vnd.google-apps.folder":
              modulos.append({'id':i['id'],'title':i['name']})
-    return modulos
+    return jsonify(modulos)
 
 
 @app.route('/videos', methods=['POST'])
@@ -42,7 +42,7 @@ def videos():
             ).execute()
             shared = service.files().get(fileId=i['id'],fields='webViewLink').execute()
             mp4.append({'id':i['id'], 'url': shared['webViewLink'].replace('https://drive.google.com/file/d/',''), 'title': i['name'].replace(' ','_')})
-    return {'path': 'https://drive.google.com/file/d/','lessons':mp4}
+    return jsonify({'path': 'https://drive.google.com/file/d/','lessons':mp4})
 
 
 @app.route('/novo_modulo', methods=['POST'])
@@ -54,7 +54,7 @@ def create_module():
         'parents': ['15o4bQnoM3bb-JSQtJxC_AxTA-O8kL-Jh']
     }
     service.files().create(body=file_metadata).execute()
-    return {'boleano': True, 'mensagem': "Modulo criado com sucesso!"}
+    return jsonify({'boleano': True, 'mensagem': "Modulo criado com sucesso!"})
 
 
 @app.route('/upload_video', methods=['POST'])
@@ -86,9 +86,9 @@ def upload_video():
 
         print(f"Upload concluído. ID do arquivo: {response['id']}")
         video.close()
-        return 'Upload concluído com sucesso!'
+        return jsonify({'mensagem':'Upload concluído com sucesso!'})
     except Exception as e:
-        return f"Erro durante o upload: {str(e)}"
+        return jsonify({'mensagem':f"Erro durante o upload: {str(e)}"})
 
 
 @app.route('/update', methods=['POST'])
@@ -96,14 +96,14 @@ def update():
     service = api.service()
     body = {'name': remover_caracteres_especiais(request.json['nome'])}
     service.files().update(fileId=request.json['id'],body=body).execute()
-    return {'boleano': True, 'mensagem': 'Nome alterado com sucesso!'}
+    return jsonify({'boleano': True, 'mensagem': 'Nome alterado com sucesso!'})
 
 
 @app.route('/delete', methods=['POST'])
 def delete():
     service = api.service()
     service.files().delete(fileId=request.json['id']).execute()
-    return {'boleano': True, 'mensagem': 'deletado com sucesso!'}
+    return jsonify({'boleano': True, 'mensagem': 'deletado com sucesso!'})
 
 @app.route('/geral', methods=['GET'])
 def geral():
@@ -123,7 +123,7 @@ def geral():
                         shared = service.files().get(fileId=y['id'],fields='webViewLink').execute()
                         mp4.append({'id':y['id'], 'url': shared['webViewLink'].replace('https://drive.google.com/file/d/',''), 'title': y['name'].replace(' ','_')})
                 retorno.append({'id':i['id'],'title':i['name'],'path': 'https://drive.google.com/file/d/','lessons':mp4})
-    return {"modules":retorno}
+    return jsonify({"modules":retorno})
 """
 retorno = []
 for i in files['files']:
