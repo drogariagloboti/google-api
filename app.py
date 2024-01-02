@@ -121,49 +121,11 @@ def geral():
                         body={'role': 'reader', 'type': 'anyone'}
                         ).execute()
                         shared = service.files().get(fileId=y['id'],fields='webViewLink').execute()
-                        mp4.append({'id':y['id'], 'url': shared['webViewLink'].replace('https://drive.google.com/file/d/',''), 'title': y['name'].replace(' ','_')})
+                        mp4.append({'id':y['id'], 'url': shared['webViewLink'].replace('https://drive.google.com/file/d/','').replace('?usp=drivesdk',''), 'title': y['name'].replace(' ','_')})
                 retorno.append({'id':i['id'],'title':i['name'],'path': 'https://drive.google.com/file/d/','lessons':mp4})
-    return jsonify({"modules":retorno})
-"""
-retorno = []
-for i in files['files']:
-    if i["mimeType"] == "application/vnd.google-apps.folder":
-            mp4 = []
-            modulo = service.files().list(q=f"parents='{i['id']}'").execute()
-            for y in modulo['files']:
-                if y['mimeType'] == 'video/mp4':
-                    resp = service.permissions().create(
-                    fileId = y['id'],
-                    body={'role': 'reader', 'type': 'anyone'}
-                    ).execute()
-                    shared = service.files().get(fileId=y['id'],fields='webViewLink').execute()
-                    mp4.append({'id':y['id'], 'url': shared['webViewLink'].replace('https://drive.google.com/file/d/',''), 'title': y['name'].replace(' ','_')})
-            retorno.append({'id':i['id'],'title':i['name'],'path': 'https://drive.google.com/file/d/','lessons':mp
-            4})
-
-print(retorno)
-
-#print(share)
-
-#file_upload = 'WhatsApp Image 2023-12-20 at 08.59.50.jpeg'
-#media = MediaFileUpload(file_upload, mimetype='image/jpeg')
-
-#service.files().create(
-#    body = {'name': file_upload, 
-#            'parents': ['15o4bQnoM3bb-JSQtJxC_AxTA-O8kL-Jh']},
-#    media_body = media,
-#    fields='id'
-#            ).execute()
+    return jsonify({"payload":{"modules":retorno}})
 
 
-
-#for i in videos:
-#    if i['name'] == 'WhatsApp Video 2023-12-19 at 11.15.26.mp4':
-#        print(True)
-#    else:
-        
-#service.files().create(body=folders).execute()
-"""
 if __name__ == '__main__':
     import multiprocessing
     num_cores = multiprocessing.cpu_count()
